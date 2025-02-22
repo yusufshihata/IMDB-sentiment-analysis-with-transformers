@@ -6,8 +6,9 @@ from transformers import AutoTokenizer
 from src.model import TransformerEncoder
 from src.inference import predict
 
-# ✅ FIX: Ensure event loop is set properly
-if not asyncio.get_event_loop().is_running():
+try:
+    asyncio.get_running_loop()
+except RuntimeError:
     asyncio.set_event_loop(asyncio.new_event_loop())
 
 # Streamlit UI
