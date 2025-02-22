@@ -3,7 +3,11 @@
 ![Streamlit](https://img.shields.io/badge/Made%20with-Streamlit-red)
 ![PyTorch](https://img.shields.io/badge/PyTorch-%23EE4C2C.svg?logo=PyTorch&logoColor=white)
 
-🚀 This project performs **sentiment analysis on IMDB movie reviews** using a **custom Transformer model** built with PyTorch. The model classifies reviews as **Positive** or **Negative**.
+This project performs sentiment analysis on IMDB movie reviews using a custom Transformer model built with PyTorch. The model classifies reviews as Positive or Negative.
+
+I read the "Attention Is All You Need" paper in-depth and implemented its Transformer encoder from scratch to better understand the self-attention mechanism and multi-head attention. The model architecture is directly inspired by the original paper, leveraging positional encoding, layer normalization, and a multi-head self-attention mechanism. This custom implementation allows for deep learning-based sentiment classification while staying true to the theoretical foundations of Transformers.
+
+
 
 ## **✨ Features**
 ✅ **Custom Transformer model** for sentiment classification  
@@ -99,6 +103,6 @@ The app will automatically **download the model from Kaggle**, load it, and prov
 ---
 
 ## **📞 Contact**
-💬 **Author:** [Your Name](https://github.com/yusufshihata)  
+💬 **Author:** [Yusuf Shihata](https://github.com/yusufshihata)  
 📧 **Email:** yusufshihata2006@gmail.com  
 ```
