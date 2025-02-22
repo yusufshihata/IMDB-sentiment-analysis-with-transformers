@@ -4,6 +4,7 @@ import subprocess
 import streamlit as st
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
+# Set Kaggle API credentials from Streamlit secrets
 os.environ["KAGGLE_USERNAME"] = st.secrets["KAGGLE_USERNAME"]
 os.environ["KAGGLE_KEY"] = st.secrets["KAGGLE_KEY"]
 
@@ -13,27 +14,34 @@ st.set_page_config(page_title="Sentiment Analysis with Transformers", layout="ce
 st.title("IMDB Sentiment Analysis")
 st.write("Enter a movie review and get the predicted sentiment!")
 
-# Step 1: Download the model from Kaggle
-model_dir = "./model"
-if not os.path.exists(model_dir) or len(os.listdir(model_dir)) == 0:
+# Model directory
+MODEL_DIR = "./model"
+
+# Step 1: Download the model from Kaggle if not present
+if not os.path.exists(MODEL_DIR) or len(os.listdir(MODEL_DIR)) == 0:
     st.info("Downloading model from Kaggle... (This may take a few moments)")
-    os.makedirs(model_dir, exist_ok=True)
-    
+    os.makedirs(MODEL_DIR, exist_ok=True)
+
     try:
-        subprocess.run([
-            "kaggle", "kernels", "output", "yusufshihata20069/sentiment-analysis-with-transformers",
-            "-p", model_dir
-        ], check=True)
+        result = subprocess.run(
+            [
+                "kaggle", "kernels", "output", "yusufshihata20069/sentiment-analysis-with-transformers",
+                "-p", MODEL_DIR
+            ],
+            capture_output=True,
+            text=True,
+            check=True
+        )
         st.success("Model downloaded successfully!")
-    except Exception as e:
-        st.error(f"Failed to download model: {e}")
+    except subprocess.CalledProcessError as e:
+        st.error(f"Failed to download model: {e.stderr}")
         st.stop()
 
 # Step 2: Load the model
 st.info("Loading model...")
 try:
-    model = AutoModelForSequenceClassification.from_pretrained(model_dir)
-    tokenizer = AutoTokenizer.from_pretrained(model_dir)
+    model = AutoModelForSequenceClassification.from_pretrained(MODEL_DIR, local_files_only=True)
+    tokenizer = AutoTokenizer.from_pretrained(MODEL_DIR, local_files_only=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
     st.success("Model loaded successfully!")
