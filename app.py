@@ -1,48 +1,58 @@
-import streamlit as st
+import os
 import torch
-import torch.optim as optim
-from transformers import AutoTokenizer
-from src.model import TransformerEncoder  # Import your Transformer model class
-from src.lr_scheduler import TransformerScheduler
-from src.utils import load_checkpoint
+import subprocess
+import streamlit as st
+from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
-# Load model and tokenizer
-@st.cache_resource
-def load_tokenizer():
-    return AutoTokenizer.from_pretrained("bert-base-uncased")  # Adjust for your tokenizer
+# Streamlit UI Setup
+st.set_page_config(page_title="Sentiment Analysis with Transformers", layout="centered")
 
-net = TransformerEncoder(vocab_size=30522, d_model=768, num_heads=12, num_layers=6, d_ff=3072, num_classes=2)
-optimizer = optim.Adam(net.parameters(), lr=1e-4)
+st.title("IMDB Sentiment Analysis")
+st.write("Enter a movie review and get the predicted sentiment!")
 
-model = load_checkpoint(
-    "./models/checkpoint_3.pth",
-    net,
-    optimizer,
-    TransformerScheduler(optimizer, 768)
-)
-tokenizer = load_tokenizer()
+# Step 1: Download the model from Kaggle
+model_dir = "./model"
+if not os.path.exists(model_dir) or len(os.listdir(model_dir)) == 0:
+    st.info("Downloading model from Kaggle... (This may take a few moments)")
+    os.makedirs(model_dir, exist_ok=True)
+    
+    try:
+        subprocess.run([
+            "kaggle", "kernels", "output", "yusufshihata20069/sentiment-analysis-with-transformers",
+            "-p", model_dir
+        ], check=True)
+        st.success("Model downloaded successfully!")
+    except Exception as e:
+        st.error(f"Failed to download model: {e}")
+        st.stop()
 
-# Streamlit UI
-st.title("Sentiment Analysis App")
-st.subheader("Enter a review and see if it's Positive or Negative!")
+# Step 2: Load the model
+st.info("Loading model...")
+try:
+    model = AutoModelForSequenceClassification.from_pretrained(model_dir)
+    tokenizer = AutoTokenizer.from_pretrained(model_dir)
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    model.to(device)
+    st.success("Model loaded successfully!")
+except Exception as e:
+    st.error(f"Failed to load model: {e}")
+    st.stop()
 
-# User Input
-review_text = st.text_area("Enter your review:", "")
+# Step 3: Prediction Function
+def predict_sentiment(text):
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True)
+    inputs = {key: val.to(device) for key, val in inputs.items()}  # Move to GPU if available
+    with torch.no_grad():
+        outputs = model(**inputs)
+    scores = torch.softmax(outputs.logits, dim=1)
+    sentiment = torch.argmax(scores).item()
+    return "Positive" if sentiment == 1 else "Negative"
 
+# Step 4: Streamlit UI
+user_input = st.text_area("Enter a review:", "")
 if st.button("Analyze Sentiment"):
-    if review_text.strip():
-        # Tokenize and preprocess
-        tokens = tokenizer(review_text, padding="max_length", truncation=True, max_length=512, return_tensors="pt").unsqueeze(0)
-        input_ids = tokens["input_ids"]
-        
-        # Make prediction
-        with torch.no_grad():
-            logits = model(input_ids)
-        
-        # Get sentiment
-        sentiment = "Positive 😊" if torch.argmax(logits, dim=1).item() == 1 else "Negative 😞"
-        
-        # Display result
-        st.success(f"**Sentiment:** {sentiment}")
+    if user_input.strip():
+        sentiment = predict_sentiment(user_input)
+        st.subheader(f"Predicted Sentiment: **{sentiment}**")
     else:
-        st.warning("Please enter a review first.")
+        st.warning("Please enter some text before analyzing.")
