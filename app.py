@@ -18,7 +18,7 @@ st.write("Enter a movie review and get the predicted sentiment!")
 
 # Model path
 MODEL_DIR = "./model"
-MODEL_PATH = os.path.join(MODEL_DIR, "best_model.pth")
+MODEL_PATH = os.path.join(MODEL_DIR, "checkpoint_3.pth")
 
 # Load Tokenizer
 st.info("Loading tokenizer...")
