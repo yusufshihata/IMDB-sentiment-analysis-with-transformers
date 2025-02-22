@@ -4,6 +4,7 @@ import streamlit as st
 import subprocess
 from transformers import AutoTokenizer
 from src.model import TransformerEncoder
+from src.utils import load_checkpoint
 from src.inference import predict
 
 # Streamlit UI
@@ -48,7 +49,7 @@ except Exception as e:
 st.info("Loading model...")
 try:
     model = TransformerEncoder(vocab_size=30522, d_model=768, num_heads=12, num_layers=6, d_ff=3072)
-    model.load_state_dict(torch.load(MODEL_PATH, map_location=torch.device("cpu")))
+    load_checkpoint(MODEL_PATH, model, None)
     model.eval()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
