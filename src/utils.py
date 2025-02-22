@@ -72,7 +72,7 @@ def load_checkpoint(filename, model, optimizer, scheduler=None):
         torch.optim.lr_scheduler._LRScheduler (optional): Restored scheduler.
     """
     # Load checkpoint file
-    checkpoint = torch.load(filename)
+    checkpoint = torch.load(filename, map_location=torch.device("cpu"))
     
     # Restore model and optimizer state
     model.load_state_dict(checkpoint["model_state_dict"], map_location=torch.device("cpu"))
