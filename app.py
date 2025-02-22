@@ -4,6 +4,9 @@ import subprocess
 import streamlit as st
 from transformers import AutoModelForSequenceClassification, AutoTokenizer
 
+os.environ["KAGGLE_USERNAME"] = st.secrets["KAGGLE_USERNAME"]
+os.environ["KAGGLE_KEY"] = st.secrets["KAGGLE_KEY"]
+
 # Streamlit UI Setup
 st.set_page_config(page_title="Sentiment Analysis with Transformers", layout="centered")
 
