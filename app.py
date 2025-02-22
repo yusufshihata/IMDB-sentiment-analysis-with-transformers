@@ -2,8 +2,8 @@ import os
 import torch
 import streamlit as st
 from transformers import AutoTokenizer
-from model import TransformerEncoder  # Load your custom model
-from inference import predict  # Import prediction function
+from src.model import TransformerEncoder  # Load your custom model
+from src.inference import predict  # Import prediction function
 
 # Streamlit UI Setup
 st.set_page_config(page_title="IMDB Sentiment Analysis with Transformers", layout="centered")
