@@ -54,7 +54,7 @@ try:
     scheduler = TransformerScheduler(optimizer=optimizer, d_model=768, warmup_steps=4000)
     load_checkpoint(MODEL_PATH, model, optimizer, scheduler)
     model.eval()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = "cpu"
     model.to(device)
     st.success("Model loaded!")
 except Exception as e:
