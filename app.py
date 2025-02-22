@@ -17,7 +17,7 @@ st.title("IMDB Sentiment Analysis")
 st.write("Enter a movie review and get the predicted sentiment!")
 
 # Model path
-MODEL_DIR = "./model"
+MODEL_DIR = "./models"
 MODEL_PATH = os.path.join(MODEL_DIR, "checkpoint_3.pth")
 
 # Load Tokenizer
