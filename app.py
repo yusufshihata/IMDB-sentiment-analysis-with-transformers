@@ -3,8 +3,8 @@ import os
 import torch
 import streamlit as st
 from transformers import AutoTokenizer
-from model import TransformerEncoder
-from inference import predict
+from src.model import TransformerEncoder
+from src.inference import predict
 
 # ✅ FIX: Ensure event loop is set properly
 if not asyncio.get_event_loop().is_running():
