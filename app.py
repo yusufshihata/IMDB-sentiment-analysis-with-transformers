@@ -6,6 +6,7 @@ from transformers import AutoTokenizer
 from src.model import TransformerEncoder
 from src.utils import load_checkpoint
 from src.inference import predict
+from src.lr_scheduler import TransformerScheduler
 
 # Streamlit UI
 st.set_page_config(page_title="IMDB Sentiment Analysis", layout="centered")
@@ -49,7 +50,9 @@ except Exception as e:
 st.info("Loading model...")
 try:
     model = TransformerEncoder(vocab_size=30522, d_model=768, num_heads=12, num_layers=6, d_ff=3072)
-    load_checkpoint(MODEL_PATH, model, None)
+    optimizer = torch.optim.Adam(model.parameters(), lr=1e-4)
+    scheduler = TransformerScheduler(optimizer=optimizer, d_model=768, warmup_steps=4000)
+    load_checkpoint(MODEL_PATH, model, optimizer, scheduler)
     model.eval()
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
