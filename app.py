@@ -66,7 +66,7 @@ user_input = st.text_area("Enter a review:", "")
 
 if st.button("Analyze Sentiment"):
     if user_input.strip():
-        sentiment = predict(model, tokenizer, user_input, device)
+        sentiment = predict(model, tokenizer, user_input)
         st.subheader(f"Predicted Sentiment: **{sentiment}**")
     else:
         st.warning("Please enter text before analyzing.")
