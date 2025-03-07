@@ -30,7 +30,7 @@ I read the "Attention Is All You Need" paper in-depth and implemented its Transf
 ## **🛠 Installation & Setup**
 ### **1️⃣ Clone the Repository**
 ```sh
-git clone https://github.com/your-username/imdb-sentiment-analysis.git
+git clone https://github.com/yusufshihata/imdb-sentiment-analysis.git
 cd imdb-sentiment-analysis
 ```
 
